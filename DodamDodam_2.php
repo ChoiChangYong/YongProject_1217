@@ -27,7 +27,7 @@
 		<style>
 		.map_wrap, .map_wrap * {margin:0;padding:0;font-family:'Malgun Gothic',dotum,'돋움',sans-serif;font-size:12px;}
 		.map_wrap a, .map_wrap a:hover, .map_wrap a:active{color:#000;text-decoration: none;}
-		.map_wrap {position:relative;width:100%;height:500px;}
+		.map_wrap {position:relative;width:100%;height:800px;}
 		#menu_wrap {position:absolute; top:0;left:0;bottom:0;margin:10px 0 30px 10px;padding:5px;overflow-y:auto;background:rgba(255, 255, 255, 0.7);z-index: 1;font-size:12px;border-radius: 10px;}
 		.bg_white {background:#fff;}
 		#menu_wrap hr {display: block; height: 1px;border: 0; border-top: 2px solid #5F5F5F;margin:3px 0;}
@@ -540,6 +540,13 @@
 						 position: new daum.maps.LatLng(latlng.getLat(), latlng.getLng())
 				  });
 				  marker_main.setMap(map);
+
+					num_child_house = 0;
+					num_frequentzonechild = 0;
+					num_park = 0;
+					num_hospital = 0;
+					num_childprtc = 0;
+
 			});
 			///////////////////////////////////////////////////////////////////////
 
@@ -549,7 +556,7 @@
 				// 원 객체를 생성합니다
 				var circle = new daum.maps.Circle({
 					center : markerPosition, // 원의 중심좌표입니다
-					radius: 620.3224967, // 원의 반지름입니다 m 단위 이며 선 객체를 이용해서 얻어옵니다
+					radius: 500, // 원의 반지름입니다 m 단위 이며 선 객체를 이용해서 얻어옵니다
 					strokeWeight: 1, // 선의 두께입니다
 					strokeColor: '#00a0e9', // 선의 색깔입니다
 					strokeOpacity: 0.1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
@@ -592,7 +599,7 @@
 
 				///////////////////////////////////////////////////////////////////////////////////////////////////
 				var rad = Math.PI / 180;
-				var latitude = 620.3224967 / 6378137;
+				var latitude = 500 / 6378137;
 				latitude = latitude / rad;
 				var longitude = latitude / Math.cos(latitude * rad);
 
