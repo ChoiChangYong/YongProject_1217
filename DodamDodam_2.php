@@ -10,7 +10,8 @@
 	  print "$errno: $error\n";
 	  exit();
 	}
-	mysqli_select_db($conn, "childhouse");
+	//mysqli_select_db($conn, "dodamdodam");
+	mysqli_select_db($conn, "DodamDodam");
 	$result_child_house = mysqli_query($conn, "SELECT * FROM `child_house`");
 	$result_childprtc = mysqli_query($conn, "SELECT * FROM `childprtc`");
 	$result_frequentzonechild = mysqli_query($conn, "SELECT * FROM `frequentzonechild`");
@@ -48,6 +49,12 @@
 		#placesList .item .marker_3 {background:url(http://localhost/Dodam_image/map_ico3.png) no-repeat;}
 		#placesList .item .marker_4 {background:url(http://localhost/Dodam_image/map_ico4.png) no-repeat;}
 		#placesList .item .marker_5 {background:url(http://localhost/Dodam_image/map_ico5.png) no-repeat;}
+		#placesList .item .grade_S {background:url(http://localhost/Dodam_image/S_grade.png) no-repeat;}
+	  #placesList .item .grade_A {background:url(http://localhost/Dodam_image/A_grade.png) no-repeat;}
+	  #placesList .item .grade_B {background:url(http://localhost/Dodam_image/B_grade.png) no-repeat;}
+	  #placesList .item .grade_C {background:url(http://localhost/Dodam_image/C_grade.png) no-repeat;}
+	  #placesList .item .grade_D {background:url(http://localhost/Dodam_image/D_grade.png) no-repeat;}
+	  #placesList .item .grade_F {background:url(http://localhost/Dodam_image/F_grade.png) no-repeat;}
 		#pagination {margin:10px auto;text-align: center;}
 		#pagination a {display:inline-block;margin-right:10px;}
 		#pagination .on {font-weight: bold; cursor: default;color:#777;}
@@ -66,7 +73,7 @@
 
 					<div id="menu_wrap" class="bg_white">
 						<div>
-                    <button type="button" onclick="searchPlaces();">계산시작!</button>
+                    <button type="button" onclick="searchPlaces();">측정시작!</button>
             </div>
 						<ul id="placesList"></ul>
 		        <div id="pagination"></div>
@@ -130,6 +137,8 @@
 			var num_hospital = 0;
 			var num_childprtc = 0;
 
+			var score = 0;
+			var grade;
 
 			// 마커가 표시될 위치입니다
 			var markerPosition = mapOption.center;
@@ -391,7 +400,9 @@
 					    //map.setBounds(bounds);
 					}
 					// 검색결과 항목을 Element로 반환하는 함수입니다
-					function getListItemTotal(num_child_house, num_frequentzonechild, num_park, num_hospital, num_childprtc) {
+/**
+ * 왼쪽 리스트뷰의 맨 위쪽에 배치될 각 마커 개수 출력 부분 html 코드 조합
+ */					function getListItemTotal(num_child_house, num_frequentzonechild, num_park, num_hospital, num_childprtc) {
 
 							var el = document.createElement('li'),
 					    itemStr = '<span class="markerbg marker_' + '1' + '"></span>' +
@@ -419,6 +430,14 @@
 												'   <h5>' + '원 안에 어린이 보호구역이 ' + num_childprtc + '개 있습니다.' + '</h5>' +
 												'</div>';
 							itemStr += '<br />';
+
+							itemStr +='<span class="markerbg grade_' + grade + '"></span>' +
+												'<div class="info">' +
+												'   <h5>' + '이 지역은 ' + score + '점, ' + grade + '등급 입니다.' + '</h5>' +
+												'</div>';
+							itemStr += '<br />';
+
+
 					    el.innerHTML = itemStr;
 					    el.className = 'item';
 
@@ -546,8 +565,99 @@
 					num_park = 0;
 					num_hospital = 0;
 					num_childprtc = 0;
+					score = 0;
 
 			});
+
+			///////////////////////////////////////////////////////////////////////
+			function score_total(num_child_house, num_frequentzonechild, num_park, num_hospital, num_childprtc)
+			{
+				var score_ = 0;
+
+			if (num_child_house > 0){
+
+			   score_ += 20;
+
+			   if( num_child_house > 5){
+					   num_child_house = 5;
+			   }
+
+				 score_ = score_ + num_child_house;
+			}
+
+			if (num_childprtc > 0){
+
+			   score_ += 20;
+
+				 if( num_childprtc > 5){
+					   num_childprtc = 5;
+			   }
+
+				 score_ = score_ + num_childprtc;
+			}
+
+			if (num_park > 0){
+
+					score_ += 20;
+
+					if( num_park > 5){
+							num_park = 5;
+					}
+
+					score_ = score_ + num_park;
+				}
+
+
+			if (num_hospital > 0){
+
+			   score_ += 20;
+
+				 if( num_hospital > 5){
+						 num_hospital = 5;
+				 }
+
+				 score_ = score_ + num_hospital;
+			}
+
+			if (num_frequentzonechild > 0){
+			   score_ = score_ - 50;
+			   score_ = score_ - (num_frequentzonechild-1)* 50;
+			}
+
+			// S : 100
+			// A : 90~99
+			// B : 70~89
+			// C : 50~69
+			// D : 30~49
+			// F : 0~29
+
+			if(score_ == 100)
+			{
+				grade = "S";
+			}
+			if(score_ >= 90 && score_ < 100)
+			{
+				grade = "A";
+			}
+			if(score_ >= 70 && score_ < 90)
+			{
+				grade = "B";
+			}
+			if(score_ >= 50 && score_ < 70)
+			{
+				grade = "C";
+			}
+			if(score_ >= 30 && score_ < 50)
+			{
+				grade = "D";
+			}
+			if(score_ < 30)
+			{
+				grade = "F";
+			}
+
+			return score_;
+			}
 			///////////////////////////////////////////////////////////////////////
 
 			function searchPlaces() {
@@ -707,6 +817,8 @@
 						num_childprtc++;
 					}
 				}
+
+				score = score_total(num_child_house, num_frequentzonechild, num_park, num_hospital, num_childprtc);
 
 				itemEl = getListItemTotal(num_child_house, num_frequentzonechild, num_park, num_hospital, num_childprtc);
 
